@@ -12,6 +12,7 @@ namespace B13\Masi;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\SlugHelper;
+use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -90,6 +91,17 @@ class SlugModifier
     protected function resolveHookParameters(array $configuration, $tableName, $fieldName, $pid, $workspaceId, $record)
     {
         $overrides = BackendUtility::getPagesTSconfig($pid)['TCEMAIN.'][$tableName . '.'][$fieldName . '.'] ?? [];
+        if ($overrides) {
+            $typoscriptService = GeneralUtility::makeInstance(TypoScriptService::class);
+            $overrides = $typoscriptService->convertTypoScriptArrayToPlainArray(
+                $overrides
+            );
+            if (isset($overrides['generatorOptions']['fields'])) {
+                $overrides['generatorOptions']['fields'] = array_unique(
+                    GeneralUtility::trimExplode(',', $overrides['generatorOptions']['fields'], true)
+                );
+            }
+        }
         $this->configuration = array_replace_recursive($configuration, $overrides);
         $this->tableName = $tableName;
         $this->fieldName = $fieldName;

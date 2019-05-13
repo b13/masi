@@ -13,7 +13,7 @@ There is a CLI command to migrate the options from RealURL to the _masi_ databas
 3. _masi_ evaluates PageTSconfig where you can override your values.
 
         TCEMAIN.pages.slug.generatorOptions {
-            generatorOptions.fields = company, city
+            fields = company, city
             fieldSeparator = -
         }
 
