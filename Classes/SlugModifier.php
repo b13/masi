@@ -89,7 +89,7 @@ class SlugModifier
      */
     protected function resolveHookParameters(array $configuration, $tableName, $fieldName, $pid, $workspaceId, $record)
     {
-        $overrides = BackendUtility::getPagesTSconfig($pid)['TCEMAIN.'][$tableName][$fieldName] ?? [];
+        $overrides = BackendUtility::getPagesTSconfig($pid)['TCEMAIN.'][$tableName . '.'][$fieldName . '.'] ?? [];
         $this->configuration = array_replace_recursive($configuration, $overrides);
         $this->tableName = $tableName;
         $this->fieldName = $fieldName;
