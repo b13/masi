@@ -124,7 +124,7 @@ class SlugModifier
      */
     protected function regenerateSlug(SlugHelper $helper): string
     {
-        $prefix = $this->configuration['prefix'] ?? '';
+        $prefix = $this->configuration['generatorOptions']['prefix'] ?? '';
         if ($this->configuration['generatorOptions']['prefixParentPageSlug'] ?? false) {
             $languageFieldName = $GLOBALS['TCA'][$this->tableName]['ctrl']['languageField'] ?? null;
             $languageId = (int)($this->recordData[$languageFieldName] ?? 0);
