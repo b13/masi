@@ -58,3 +58,5 @@ exactly that, without having to burden everything into TYPO3 Core.
 
 _masi_ was initially created by Benni Mack in 2019, for [b13, Stuttgart](https://b13.com), with the nice support from
 Martin Kutschker.
+
+[Find more TYPO3 extensions we have developed](https://b13.com/useful-typo3-extensions-from-b13-to-you) that help us deliver value in client projects. As part of the way we work, we focus on testing and best practices to ensure long-term performance, reliability, and results in all our code.
