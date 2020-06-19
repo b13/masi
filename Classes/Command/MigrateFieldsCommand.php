@@ -70,7 +70,7 @@ class MigrateFieldsCommand extends Command
                     ),
                     $queryBuilder->expr()->in(
                         'l10n_parent',
-                        $existingPages
+                        array_merge($existingPages, [0])
                     )
                 )
                 ->execute();
