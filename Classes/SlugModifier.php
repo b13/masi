@@ -193,7 +193,7 @@ class SlugModifier
         $parentPageRecord = null;
         $rootLine = BackendUtility::BEgetRootLine($pid, '', true, ['nav_title', 'exclude_slug_for_subpages']);
         do {
-            $parentPageRecord = array_shift($rootLine);
+            $parentPageRecord = array_shift($rootLine) ?? [];
             $parentPageRecord = $this->tryRecordOverlay($parentPageRecord, $languageId);
             $excludeThisPageRecordForSubpages = (bool)$parentPageRecord['exclude_slug_for_subpages'];
         } while (!empty($rootLine) && ((int)$parentPageRecord['doktype'] === 255 || $excludeThisPageRecordForSubpages));
