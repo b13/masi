@@ -56,6 +56,11 @@ class MigrateFieldsCommand extends Command
                 ->execute()
                 ->fetchAll();
 
+            if (count($existingRows) === 0) {
+                $io->warning('Nothing done, as there is no row to update.');
+                return;
+            }
+
             $existingPages = array_column($existingRows, 'uid');
 
             $updateQueryBuilder = $conn->createQueryBuilder();
@@ -63,14 +68,16 @@ class MigrateFieldsCommand extends Command
                 ->update('pages')
                 ->set('exclude_slug_for_subpages', 1)
                 ->where(
-                    $queryBuilder->expr()->in(
-                        'uid',
-                        // do not use named parameter here as the list can get too long
-                        $existingPages
-                    ),
-                    $queryBuilder->expr()->in(
-                        'l10n_parent',
-                        array_merge($existingPages, [0])
+                    $queryBuilder->expr()->orX(
+                        $queryBuilder->expr()->in(
+                            'uid',
+                            // do not use named parameter here as the list can get too long
+                            $existingPages
+                        ),
+                        $queryBuilder->expr()->in(
+                            'l10n_parent',
+                            $existingPages
+                        )
                     )
                 )
                 ->execute();
