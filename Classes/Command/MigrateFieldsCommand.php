@@ -57,7 +57,7 @@ class MigrateFieldsCommand extends Command
                 ->fetchAll();
 
             if (count($existingRows) === 0) {
-                $io->warning('Nothing done, as there is no row to update.');
+                $io->success('Nothing done, as there is no row to update.');
                 return;
             }
 
@@ -84,7 +84,7 @@ class MigrateFieldsCommand extends Command
 
             $io->success('Migrated ' . $affectedRows . ' pages (incl. translations)');
         } else {
-            $io->warning('Nothing done, as the database field "pages.tx_realurl_exclude" does not exist.');
+            $io->note('Nothing done, as the database field "pages.tx_realurl_exclude" does not exist.');
         }
     }
 
