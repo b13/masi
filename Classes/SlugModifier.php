@@ -170,7 +170,7 @@ class SlugModifier
         if ($slug === '' || $slug === '/') {
             $slug = 'default-' . GeneralUtility::shortMD5(json_encode($this->recordData));
         }
-        if ($this->prependSlashInSlug && ($slug{0} ?? '') !== '/') {
+        if ($this->prependSlashInSlug && ($slug[0] ?? '') !== '/') {
             $slug = '/' . $slug;
         }
         if (!empty($prefix)) {
