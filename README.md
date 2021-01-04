@@ -42,6 +42,7 @@ If you want to migrate from RealURL, execute this one-time command as long as th
 
     `vendor/bin/typo3 database:migrate:masi`
 
+There is also an upgrade wizard for the Installer to execute the same functionality via the Upgrade Tool of TYPO3's Installer.
 
 ## License
 
