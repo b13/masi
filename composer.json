@@ -13,10 +13,10 @@
   "homepage": "https://github.com/b13/masi",
   "license": ["GPL-2.0-or-later"],
   "require": {
-    "typo3/cms-core": "^9.5.6 || ^10.0"
+    "typo3/cms-core": "^9.5.6 || ^10.0 || ^11.0"
   },
   "replace": {
-    "masi": "self.version"
+    "typo3-ter/masi": "self.version"
   },
   "extra": {
     "typo3/cms": {
