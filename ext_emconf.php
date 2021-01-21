@@ -1,6 +1,6 @@
 <?php
 $EM_CONF[$_EXTKEY] = [
-    'title' => 'B13 ❤ masi - customize your Page URLs',
+    'title' => 'Masi - customize your Page URLs',
     'description' => 'Adds convenient features for excluding pages when generating URLs.',
     'category' => 'be',
     'state' => 'stable',
