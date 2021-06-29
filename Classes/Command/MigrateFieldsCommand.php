@@ -86,6 +86,8 @@ class MigrateFieldsCommand extends Command
         } else {
             $io->note('Nothing done, as the database field "pages.tx_realurl_exclude" does not exist.');
         }
+        
+        return 0;
     }
 
     /**
