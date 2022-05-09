@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  B13\Masi\:
+    resource: '../Classes'
+
+  B13\Masi\Command\MigrateFieldsCommand:
+    tags:
+      - name: 'console.command'
+        command: 'database:migrate:masi'
+        description: 'Migrates pages.tx_realurl_exclude to pages.exclude_slug_for_subpages.'
+        schedulable: false

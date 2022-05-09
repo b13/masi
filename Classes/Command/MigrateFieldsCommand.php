@@ -38,7 +38,7 @@ class MigrateFieldsCommand extends Command
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
@@ -58,7 +58,7 @@ class MigrateFieldsCommand extends Command
 
             if (count($existingRows) === 0) {
                 $io->success('Nothing done, as there is no row to update.');
-                return;
+                return 0;
             }
 
             $existingPages = array_column($existingRows, 'uid');
@@ -86,7 +86,6 @@ class MigrateFieldsCommand extends Command
         } else {
             $io->note('Nothing done, as the database field "pages.tx_realurl_exclude" does not exist.');
         }
-        
         return 0;
     }
 
