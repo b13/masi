@@ -1,9 +1,8 @@
 <?php
-defined('TYPO3_MODE') or die();
 
+defined('TYPO3') or die();
 
 $GLOBALS['TCA']['pages']['columns']['slug']['config']['generatorOptions']['postModifiers'][] = \B13\Masi\SlugModifier::class . '->modifyGeneratedSlugForPage';
-
 
 $additionalColumns = [
     'exclude_slug_for_subpages' => [
@@ -16,16 +15,15 @@ $additionalColumns = [
                 [
                     0 => '',
                     1 => '',
-                ]
+                ],
             ],
             'behaviour' => [
-                'allowLanguageSynchronization' => true
-            ]
-        ]
-    ]
+                'allowLanguageSynchronization' => true,
+            ],
+        ],
+    ],
 ];
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('pages', $additionalColumns);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('pages', 'title', 'exclude_slug_for_subpages', 'after:slug');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('pages', 'titleonly', 'exclude_slug_for_subpages', 'after:slug');
-
