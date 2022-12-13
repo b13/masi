@@ -1,10 +1,10 @@
 # masi - Extend TYPO3's URL Handling
 
-Masi is the missing piece for the people who want to customize _everything_ when generating URLs in TYPO3 v9+.
+Masi is the missing piece for the people who want to customize _everything_ when generating URLs in TYPO3 v10+.
 
 ## Features
 
-1. TYPO3 v9 skips pages of type "SysFolder" and "Spacers" by default when generating the URL of subpages. _masi_ includes them by default!
+1. TYPO3 v10 skips pages of type "SysFolder" and "Spacers" by default when generating the URL of subpages. _masi_ includes them by default!
 
 2. _masi_ also ships with a new checkbox for pages, to exclude a certain page slug when generating subpages. This way, you can exclude only certain SysFolders.
 
@@ -36,7 +36,7 @@ Of course, all the values within the "slug" field can be changed by the editor, 
 
 Use it via `composer req b13/masi` or install the Extension `masi` from the TYPO3 Extension Repository.
 
-_masi_ requires TYPO3 v9.5.6 or later.
+_masi_ requires TYPO3 v10.4.0 or later.
 
 If you want to migrate from RealURL, execute this one-time command as long as the database field `pages.tx_realurl_exclude` exists, and transfers the data to `pages.exclude_slug_for_subpages`:
 
@@ -51,7 +51,7 @@ As TYPO3 Core, _masi_ is licensed under GPL2 or later. See the LICENSE file for 
 
 ## Background, Authors & Further Maintenance
 
-This extension was created as a show-case on what you can do with one magic hook for TYPO3 v9 and customize
+This extension was created as a show-case on what you can do with one magic hook for TYPO3 v10 and customize
 so many things.
 
 TYPO3 community often requests functionality, which can be put in small and efficient extensions, and _masi_ does

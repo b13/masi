@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 namespace B13\Masi;
 
 /*
@@ -11,6 +12,7 @@ namespace B13\Masi;
  */
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\SlugHelper;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -20,50 +22,23 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class SlugModifier
 {
-    /**
-     * @var string
-     */
-    protected $tableName;
-
-    /**
-     * @var string
-     */
-    protected $fieldName;
-
-    /**
-     * @var int
-     */
-    protected $workspaceId;
-
-    /**
-     * @var array
-     */
-    protected $configuration;
+    protected string $tableName;
+    protected string $fieldName;
+    protected int $workspaceId;
+    protected array $configuration;
 
     /**
      * Defines whether the slug field should start with "/".
      * For pages (due to rootline functionality), this is a must have, otherwise the root level page
      * would have an empty value.
-     *
-     * @var bool
      */
-    protected $prependSlashInSlug;
+    protected bool $prependSlashInSlug;
 
-    /**
-     * @var int
-     */
-    protected $pid;
-    /**
-     * @var array
-     */
-    protected $recordData;
+    protected int $pid;
+    protected array $recordData;
 
     /**
      * Hooks into after a page URL was generated.
-     *
-     * @param array $parameters
-     * @param SlugHelper $helper
-     * @return string
      */
     public function modifyGeneratedSlugForPage(array $parameters, SlugHelper $helper): string
     {
@@ -80,15 +55,8 @@ class SlugModifier
 
     /**
      * Take over hook values to our own class.
-     *
-     * @param array $configuration
-     * @param $tableName
-     * @param $fieldName
-     * @param $pid
-     * @param $workspaceId
-     * @param $record
      */
-    protected function resolveHookParameters(array $configuration, $tableName, $fieldName, $pid, $workspaceId, $record)
+    protected function resolveHookParameters(array $configuration, string $tableName, string $fieldName, int $pid, int $workspaceId, array $record): void
     {
         $overrides = BackendUtility::getPagesTSconfig($pid)['TCEMAIN.'][$tableName . '.'][$fieldName . '.'] ?? [];
         if ($overrides) {
@@ -108,6 +76,17 @@ class SlugModifier
         $this->pid = $pid;
         $this->workspaceId = $workspaceId;
         $this->recordData = $record;
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
+        $row = $queryBuilder->select('*')
+            ->from('pages')
+            ->where(
+                $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($record['uid'], \PDO::PARAM_INT))
+            )
+            ->execute()
+            ->fetchAssociative();
+        if ($row !== false) {
+            $this->recordData = $row;
+        }
 
         if ($tableName === 'pages' && $fieldName === 'slug') {
             $this->prependSlashInSlug = true;
@@ -118,9 +97,6 @@ class SlugModifier
 
     /**
      * Re-creates the slug like core, however, uses our custom "resolveParentPageRecord" method.
-     *
-     * @param SlugHelper $helper
-     * @return string
      */
     protected function regenerateSlug(SlugHelper $helper): string
     {
@@ -168,7 +144,7 @@ class SlugModifier
         $slug = $helper->sanitize($slug);
         // No valid data found
         if ($slug === '' || $slug === '/') {
-            $slug = 'default-' . GeneralUtility::shortMD5(json_encode($this->recordData));
+            $slug = 'default-' . substr(md5(json_encode($this->recordData)), 0, 10);
         }
         if ($this->prependSlashInSlug && ($slug[0] ?? '') !== '/') {
             $slug = '/' . $slug;
@@ -183,14 +159,9 @@ class SlugModifier
     /**
      * Similar to core logic, but a bit different:
      * Fetches the parent page, but only respects recyclers! includes sysfolders
-     *
-     * @param int $pid
-     * @param int $languageId
-     * @return array|null
      */
     protected function resolveParentPageRecord(int $pid, int $languageId): ?array
     {
-        $parentPageRecord = null;
         $rootLine = BackendUtility::BEgetRootLine($pid, '', true, ['nav_title', 'exclude_slug_for_subpages']);
         do {
             $parentPageRecord = array_shift($rootLine) ?? [];
@@ -202,10 +173,6 @@ class SlugModifier
 
     /**
      * Fetches a record translation if there is one and returns that one instead.
-     *
-     * @param array $page
-     * @param int $languageId
-     * @return array
      */
     protected function tryRecordOverlay(array $page, int $languageId): array
     {
