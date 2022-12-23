@@ -14,6 +14,7 @@ namespace B13\Masi;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\SlugHelper;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\TypoScript\TypoScriptService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -79,13 +80,17 @@ class SlugModifier
         if (isset($record['uid'])) {
             // load full record from db (else: it is a new record)
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
-            $row = $queryBuilder->select('*')
+            $stm = $queryBuilder->select('*')
                 ->from('pages')
                 ->where(
                     $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($record['uid'], \PDO::PARAM_INT))
                 )
-                ->execute()
-                ->fetchAssociative();
+                ->execute();
+            if ((GeneralUtility::makeInstance(Typo3Version::class))->getMajorVersion() === 10) {
+                $row = $stm->fetch();
+            } else {
+                $row = $stm->fetchAssociative();
+            }
             if ($row !== false) {
                 $this->recordData = $row;
             }
