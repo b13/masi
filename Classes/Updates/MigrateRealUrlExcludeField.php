@@ -38,7 +38,7 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
         return 'Masi - Migrate RealUrl pages.tx_realurl_exclude field to Masi pages.exclude_slug_for_subpages';
     }
 
-    protected function getExistingExcludedPages()
+    protected function getExistingExcludedPages(): array
     {
         $conn = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages');
         $queryBuilder = $conn->createQueryBuilder();
@@ -100,11 +100,11 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
 
     /**
      * Upgrade is necessary if the environment has the "tx_realurl_exclude" column and
-     * there is any page where has this set to "1", else skip the wizard
+     * there is at least one page having this field set to "1", else skip the wizard
      */
     public function updateNecessary(): bool
     {
-        return ($this->doesRealurlFieldExist() && count($this->getExistingExcludedPages()) > 0);
+        return $this->doesRealurlFieldExist() && count($this->getExistingExcludedPages()) > 0;
     }
 
     public function getPrerequisites(): array
