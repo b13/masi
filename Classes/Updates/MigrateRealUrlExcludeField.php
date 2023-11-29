@@ -38,10 +38,9 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
         return 'Masi - Migrate RealUrl pages.tx_realurl_exclude field to Masi pages.exclude_slug_for_subpages';
     }
 
-    public function executeUpdate(): bool
+    protected function getExistingExcludedPages(): array
     {
         $conn = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages');
-
         $queryBuilder = $conn->createQueryBuilder();
         $queryBuilder->getRestrictions()->removeAll();
         $existingRows = $queryBuilder
@@ -55,8 +54,18 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
             )
             ->execute()
             ->fetchAll();
+        
+        return array_column($existingRows, 'uid'); 
 
-        $existingPages = array_column($existingRows, 'uid');
+    }
+    
+    public function executeUpdate(): bool
+    {
+        $conn = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages');
+        $queryBuilder = $conn->createQueryBuilder();
+        $queryBuilder->getRestrictions()->removeAll();
+
+        $existingPages = $this->getExistingExcludedPages();
 
         $conn->createQueryBuilder()
             ->update('pages')
@@ -77,7 +86,7 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
         return true;
     }
 
-    public function updateNecessary(): bool
+    protected function doesRealurlFieldExist(): bool
     {
         $conn = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages');
         $columns = $conn->getSchemaManager()->listTableColumns('pages');
@@ -87,6 +96,15 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
             }
         }
         return false;
+    }
+
+    /**
+     * Upgrade is necessary if the environment has the "tx_realurl_exclude" column and
+     * there is at least one page having this field set to "1", else skip the wizard
+     */
+    public function updateNecessary(): bool
+    {
+        return $this->doesRealurlFieldExist() && count($this->getExistingExcludedPages()) > 0;
     }
 
     public function getPrerequisites(): array
