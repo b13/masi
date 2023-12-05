@@ -92,7 +92,7 @@ class SlugModifier
                 $row = $stm->fetchAssociative();
             }
             if ($row !== false) {
-                $this->recordData = $row;
+                $this->recordData = array_replace($row, $record);
             }
         }
 
@@ -137,7 +137,7 @@ class SlugModifier
             }
             foreach ($fieldNameParts as $fieldName) {
                 if (!empty($this->recordData[$fieldName])) {
-                    $pieceOfSlug = $this->recordData[$fieldName];
+                    $pieceOfSlug = (string)$this->recordData[$fieldName];
                     $pieceOfSlug = str_replace(
                         array_keys($replaceConfiguration),
                         array_values($replaceConfiguration),
