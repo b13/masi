@@ -50,7 +50,7 @@ class MigrateFieldsCommand extends Command
                 ->select('uid')
                 ->from('pages')
                 ->where(
-                    $queryBuilder->expr()->eq('tx_realurl_exclude', $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('tx_realurl_exclude', $queryBuilder->createNamedParameter(1, Connection::PARAM_INT))
                 )
                 ->execute()
                 ->fetchAll();

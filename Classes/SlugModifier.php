@@ -12,6 +12,7 @@ namespace B13\Masi;
  */
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\SlugHelper;
 use TYPO3\CMS\Core\Information\Typo3Version;
@@ -83,7 +84,7 @@ class SlugModifier
             $stm = $queryBuilder->select('*')
                 ->from('pages')
                 ->where(
-                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($record['uid'], \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($record['uid'], Connection::PARAM_INT))
                 )
                 ->execute();
             if ((GeneralUtility::makeInstance(Typo3Version::class))->getMajorVersion() === 10) {

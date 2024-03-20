@@ -12,6 +12,7 @@ namespace B13\Masi\Updates;
  * of the License, or any later version.
  */
 
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Install\Updates\DatabaseUpdatedPrerequisite;
@@ -49,7 +50,7 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
             ->where(
                 $queryBuilder->expr()->eq(
                     'tx_realurl_exclude',
-                    $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(1, Connection::PARAM_INT)
                 )
             )
             ->execute()
