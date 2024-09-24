@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+    <file t3:id="1522923235" source-language="en" datatype="plaintext" original="messages" date="2019-05-07T14:16:11Z" product-name="masi">
+        <header/>
+        <body>
+            <trans-unit id="pages.exclude_slug_for_subpages">
+                <source>Exclude this page for slug generation of subpages.</source>
+                <target>Diese Seite von der URL-Generierung bei Unterseiten ausschließen</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
