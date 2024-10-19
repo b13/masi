@@ -15,6 +15,7 @@ namespace B13\Masi\Updates;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Install\Attribute\UpgradeWizard;
 use TYPO3\CMS\Install\Updates\DatabaseUpdatedPrerequisite;
 use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
@@ -22,6 +23,7 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
  * Command for migrating fields from "pages.tx_realurl_exclude"
  * into "pages.exclude_slug_for_subpages".
  */
+#[UpgradeWizard('masiMigrateRealUrlExclude')]
 class MigrateRealUrlExcludeField implements UpgradeWizardInterface
 {
     public function getIdentifier(): string
@@ -44,7 +46,7 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
         $conn = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages');
         $queryBuilder = $conn->createQueryBuilder();
         $queryBuilder->getRestrictions()->removeAll();
-        $existingRows = $queryBuilder
+        $excludedPages = $queryBuilder
             ->select('uid')
             ->from('pages')
             ->where(
@@ -53,11 +55,10 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
                     $queryBuilder->createNamedParameter(1, Connection::PARAM_INT)
                 )
             )
-            ->execute()
-            ->fetchAll();
+            ->executeQuery()
+            ->fetchFirstColumn();
         
-        return array_column($existingRows, 'uid'); 
-
+        return $excludedPages;
     }
     
     public function executeUpdate(): bool
@@ -82,7 +83,7 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
                     array_merge($existingPages, [0])
                 )
             )
-            ->execute();
+            ->executeQuery();
 
         return true;
     }
@@ -90,7 +91,7 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
     protected function doesRealurlFieldExist(): bool
     {
         $conn = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages');
-        $columns = $conn->getSchemaManager()->listTableColumns('pages');
+        $columns = $conn->getSchemaInformation()->introspectTable('pages')->getColumns();
         foreach ($columns as $column) {
             if (strtolower($column->getName()) === 'tx_realurl_exclude') {
                 return true;
