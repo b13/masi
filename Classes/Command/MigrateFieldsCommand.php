@@ -46,28 +46,26 @@ class MigrateFieldsCommand extends Command
         if ($this->doesRealurlFieldExist($conn)) {
             $queryBuilder = $conn->createQueryBuilder();
             $queryBuilder->getRestrictions()->removeAll();
-            $existingRows = $queryBuilder
+            $existingPages = $queryBuilder
                 ->select('uid')
                 ->from('pages')
                 ->where(
                     $queryBuilder->expr()->eq('tx_realurl_exclude', $queryBuilder->createNamedParameter(1, Connection::PARAM_INT))
                 )
-                ->execute()
-                ->fetchAll();
+                ->executeQuery()
+                ->fetchFirstColumn();
 
-            if (count($existingRows) === 0) {
+            if (count($existingPages) === 0) {
                 $io->success('Nothing done, as there is no row to update.');
                 return 0;
             }
-
-            $existingPages = array_column($existingRows, 'uid');
 
             $updateQueryBuilder = $conn->createQueryBuilder();
             $affectedRows = $updateQueryBuilder
                 ->update('pages')
                 ->set('exclude_slug_for_subpages', 1)
                 ->where(
-                    $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->or(
                         $queryBuilder->expr()->in(
                             'uid',
                             // do not use named parameter here as the list can get too long
@@ -79,7 +77,7 @@ class MigrateFieldsCommand extends Command
                         )
                     )
                 )
-                ->execute();
+                ->executeQuery();
 
             $io->success('Migrated ' . $affectedRows . ' pages (incl. translations)');
         } else {
@@ -96,7 +94,7 @@ class MigrateFieldsCommand extends Command
      */
     protected function doesRealurlFieldExist(Connection $conn): bool
     {
-        $columns = $conn->getSchemaManager()->listTableColumns('pages');
+        $columns = $conn->getSchemaInformation()->introspectTable('pages')->getColumns();
         foreach ($columns as $column) {
             if (strtolower($column->getName()) === 'tx_realurl_exclude') {
                 return true;
