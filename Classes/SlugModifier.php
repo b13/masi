@@ -88,7 +88,6 @@ class SlugModifier
                 )
                 ->executeQuery()
                 ->fetchAssociative();
-            }
             if ($row !== false) {
                 $this->recordData = array_replace($row, $record);
             }
