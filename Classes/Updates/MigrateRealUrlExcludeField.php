@@ -90,13 +90,23 @@ class MigrateRealUrlExcludeField implements UpgradeWizardInterface
 
     protected function doesRealurlFieldExist(): bool
     {
+        $realurlFieldName = 'tx_realurl_exclude';
         $conn = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages');
-        $columns = $conn->getSchemaInformation()->introspectTable('pages')->getColumns();
-        foreach ($columns as $column) {
-            if (strtolower($column->getName()) === 'tx_realurl_exclude') {
-                return true;
+        $schemaInformation = $conn->getSchemaInformation();
+
+        if (method_exists($schemaInformation, 'listTableColumnNames')) {
+            // TYPO3 13.4.19 and higher
+            return in_array($realurlFieldName, $schemaInformation->listTableColumnNames('pages'), true);
+        } else if (method_exists($schemaInformation, 'introspectTable')) {
+            // Before TYPO3 v13.4.19
+            $columns = $schemaInformation->introspectTable('pages')->getColumns();
+            foreach ($columns as $column) {
+                if ($column->getName() === $realurlFieldName) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 
